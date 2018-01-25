@@ -5,7 +5,9 @@
 #include <vector>
 #include <fstream>
   
- using namespace std;
+using namespace std;
+  
+#define V 8
   
 // A utility function to find the vertex with minimum distance value, from
 // the set of vertices not yet included in shortest path tree
@@ -68,34 +70,50 @@ void dijkstra(int graph[V][V], int src)
 }
   
 int main(int argc, char *argv[]){
-	int V = atoi(argv[1]);
+	int S = stoi(argv[1]);
 	int partition = atoi(argv[2]);
 	
 	ifstream inputFile;
-	inputFile.open(argv[3]);
 	
+	inputFile.open("C:\\Users\\Me\\Desktop\\Software Engineering\\input.txt");
+	
+	if(!inputFile) cout << "error" << endl;
 	
 	int graph[V][V] = { INT_MAX };
 
 	int source, destination, weight;
 	while(inputFile >> source >> destination >> weight){
+		cout << source << " " << destination << " " << weight << endl;
 		graph[source][destination] = weight;
 	}	
-	
 	
 	int col_written = 0;
 	for(int i = 0; i < partition; i++){
 		ofstream file;
 		file.open(to_string(i) + ".dat", ofstream::binary);
 		
-		if(file.is_open){
-			file.write(reinterpret_cast<const char*>(&)
+		if(file.is_open()){
+			
+      for(int j = col_written; j < V / partition; j++, col_written++){
+
+        for(int k = 0; k < V; k++){
+
+          string towrite = to_string(graph[j][k]);
+          size_t len = towrite.size();
+          file.write((char*)&len, sizeof(len));
+          file.write((char*)&towrite[0], len);
+
+        }
+
+      }
+      
+      col_written ++;
+      file.close();
+
 		}
 		
-		file.close();
+		
 	}
-	
-	
     dijkstra(graph, 0);
   
     return 0;
